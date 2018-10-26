@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "onelink.api.oneservice.account.service";
+option java_outer_classname = "AccountServiceProto";
+option objc_class_prefix = "ACCOUNT";
+
+import "common.proto";
+
+package accountService;
+
+
+// 账户信息管理
+service AccountService {
+    // 账户信息查询
+    rpc QueryAccountInfo (QueryAccountInfoRequest) returns (QueryAccountInfoReply) {
+    }
+}
+
+// 请求参数
+message QueryAccountInfoRequest {
+    common.Page page = 1;
+    AccountInfoParams accountInfoParams = 2;
+}
+// 账户信息查询请求参数
+message AccountInfoParams{
+    string entityType = 1;
+    string entityId = 2;
+    string beId = 3;
+    string custId = 4;
+}
+
+// 账户信息查询返回参数
+message QueryAccountInfoReply {
+    common.Result result = 1;
+    AccountInfoList accountList = 2;
+}
+
+message AccountInfoList {
+    repeated AccountInfo accountInfo = 1;
+}
+
+//账户信息查询结果
+message AccountInfo {
+    string accountId = 1;
+    string accountName = 2;
+}

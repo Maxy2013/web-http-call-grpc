@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "onelink.api.oneservice.common";
+option java_outer_classname = "CommonProto";
+option objc_class_prefix = "COMMON";
+
+package common;
+
+// 分页信息
+message Page{
+    string index = 1;
+    string size = 2;
+    string total = 3;
+    string channel = 4;//类型分为 API    和   WEB
+}
+
+// 返回的格式
+message Result{
+    string code = 1;
+    string msg = 2;
+    int32 total = 3;
+    int32 count = 4;
+}

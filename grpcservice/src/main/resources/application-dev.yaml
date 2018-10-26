@@ -1,0 +1,14 @@
+spring:
+  profiles: dev
+  redis:
+    lettuce:
+      shutdown-timeout:
+grpc:
+  client:
+    one-service:
+      host:
+      - 127.0.0.1
+      port:
+      - 9898
+      enableKeepAlive: true
+      keepAliveWithoutCalls: true
