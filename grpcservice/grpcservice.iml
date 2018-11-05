@@ -16,6 +16,15 @@
     </content>
     <orderEntry type="jdk" jdkName="1.8" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/jar-lib/one-service-api-new.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
     <orderEntry type="library" name="Maven: net.devh:grpc-client-spring-boot-starter:1.4.0.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: net.devh:grpc-client-spring-boot-autoconfigure:1.4.0.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter:2.0.6.RELEASE" level="project" />
@@ -100,7 +109,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/jar-lib/one-service-api-new.jar!/" />
+          <root url="jar://D:/javaTools/jar-lib/one-service-api-1.0.0.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

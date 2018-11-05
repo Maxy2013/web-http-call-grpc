@@ -10,6 +10,10 @@ import onelink.api.oneservice.bill.service.*;
 import onelink.api.oneservice.cm.service.*;
 import onelink.api.oneservice.common.Page;
 import onelink.api.oneservice.order.service.*;
+import onelink.api.oneservice.riskcontrol.service.EnterpriseImageParams;
+import onelink.api.oneservice.riskcontrol.service.EnterpriseImageReply;
+import onelink.api.oneservice.riskcontrol.service.EnterpriseImageRequest;
+import onelink.api.oneservice.riskcontrol.service.RiskControlServiceGrpc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -44,10 +48,10 @@ public class NewGrpcController extends GrpcBase{
     public User queryOfferings(){
 
         OfferingsParams.Builder offeringsParams = OfferingsParams.newBuilder();
-        offeringsParams.setEntityId("1440101405000");
+        offeringsParams.setEntityId("17296414163");
         offeringsParams.setEntityType("M");
-        offeringsParams.setBeId("731");
-        offeringsParams.setCustId("11000001730000");
+        offeringsParams.setBeId("100");
+        offeringsParams.setCustId("511000000318020");
 
         Page page = Page.newBuilder().setTotal("1000").setIndex("1").setSize("10").setChannel("WEB").build();
 
@@ -93,7 +97,7 @@ public class NewGrpcController extends GrpcBase{
         QueryCardInfoRequest.Builder request = QueryCardInfoRequest.newBuilder();
         CardInfoParams.Builder params = CardInfoParams.newBuilder();
         params.setEntityType("S");
-        params.setEntityId("18390929026");
+        params.setEntityId("13845651232");
 
         request.setCardInfoParams(params);
 
@@ -112,8 +116,8 @@ public class NewGrpcController extends GrpcBase{
         QueryOnOffRequest.Builder request = QueryOnOffRequest.newBuilder();
         QueryOnOffParams.Builder params = QueryOnOffParams.newBuilder();
         params.setEntityType("M");
-        params.setEntityId("1440101405000");
-        params.setIsmi("460043014005000");
+        params.setEntityId("17296414163");
+        params.setIsmi("460072964100948");
         request.setQueryOnOffParams(params);
 
         QueryOnOffReply onOffReply = cmServiceBlockingStub.querySubStatus(request.build());
@@ -123,22 +127,37 @@ public class NewGrpcController extends GrpcBase{
 
     @RequestMapping("/payment")
     public void payment(){
+
+        BidRequest.Builder bidRequest = BidRequest.newBuilder();
+        BidParams.Builder bidParams = BidParams.newBuilder();
+        bidParams.setAccountName("中移信息测试集团-安徽省");
+        bidParams.setEntityId("111000001585000");
+        bidParams.setEntityType("A");
+        bidParams.setCustId("111000001907001");
+        bidParams.setBeId("551");
+        bidParams.setChargeMoney("10");
+        bidRequest.setBidParams(bidParams);
+
+        BidResponse response = billServiceBlockingStub.bid(bidRequest.build());
+        BidResult orderInfo = response.getOrderInfo();
+
+
         OrderRequest.Builder request = OrderRequest.newBuilder();
         OrderPayParams.Builder params = OrderPayParams.newBuilder();
-        params.setBeId("731");
-        params.setCustId("11000001730000");
-        params.setAccountId("11000001467000");
-        params.setOrderNo("00792018102517250242288574688990");
-        params.setChargeOrder("00792018102517250242288574688990");
-        params.setChargeMoney("1000");
-        params.setPayment("1000");
+        params.setBeId(orderInfo.getBeId());
+        params.setCustId(orderInfo.getCustId());
+        params.setAccountId(orderInfo.getAccountId());
+        params.setOrderNo(orderInfo.getOrderNo());
+        params.setChargeOrder(orderInfo.getChargeOrder());
+        params.setChargeMoney(orderInfo.getChargeMoney());
+        params.setPayment(orderInfo.getPaymentMoney());
         params.setPaymentType("ALIPAY-WEB");
-        params.setGift("0");
+        params.setGift(orderInfo.getGift());
         params.setProductId("1");
-        params.setProductName("充值缴费");
-        params.setProductDesc("充值缴费");
+        params.setProductName("charge");
+        params.setProductDesc("charge");
         params.setIdType("07");
-        params.setIdValue("22018050311000001455000");
+        params.setIdValue(orderInfo.getAccountCode());
 
         request.setOrderPayParams(params);
 
@@ -152,8 +171,8 @@ public class NewGrpcController extends GrpcBase{
         BalanceParams.Builder builder = BalanceParams.newBuilder();
         builder.setEntityType("A");
         builder.setEntityId(accountId);
-        builder.setBeId("731");
-        builder.setCustId("11000001730000");
+        builder.setBeId("551");
+        builder.setCustId("111000001907001");
         request.setBalanceParams(builder);
 
         QueryBalanceReply queryBalanceReply = billServiceBlockingStub.queryBalance(request.build());
@@ -165,6 +184,18 @@ public class NewGrpcController extends GrpcBase{
         user.setName(queryBalanceReply.getResult().getMsg());
         user.setProduct(queryBalanceReply.getBalance().getAmount());
         return user;
+    }
+
+    @RequestMapping("/enterpriseIamge")
+    public void enterpriseIamge(){
+
+
+        EnterpriseImageRequest.Builder enterpriseImageRequest = EnterpriseImageRequest.newBuilder();
+        EnterpriseImageParams.Builder enterpriseImageParams = EnterpriseImageParams.newBuilder();
+        enterpriseImageParams.setCustCode("1900");
+        enterpriseImageRequest.setEnterpriseImageParams(enterpriseImageParams);
+        EnterpriseImageReply enterpriseImageReply = riskControlServiceBlockingStub.enterpriseImage(enterpriseImageRequest.build());
+        System.out.println("enterpriseImageReply:" + enterpriseImageReply);
     }
 
 }
