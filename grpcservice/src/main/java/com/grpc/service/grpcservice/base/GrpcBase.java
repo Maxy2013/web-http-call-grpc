@@ -7,14 +7,16 @@ import onelink.api.oneservice.bill.service.BillServiceGrpc;
 import onelink.api.oneservice.cm.service.CmServiceGrpc;
 import onelink.api.oneservice.order.service.OrderServiceGrpc;
 import onelink.api.oneservice.riskcontrol.service.RiskControlServiceGrpc;
+//import onelink.api.oneservice.riskcontrol.service.RiskControlServiceGrpc;
 
 /**
  * @author lz
  * 2018/10/18 15:22
  */
 public class GrpcBase {
-    private Channel serverChannel = ManagedChannelBuilder.forAddress("192.168.235.176", 9898).usePlaintext().build();
-//    private Channel serverChannel = ManagedChannelBuilder.forAddress("localhost", 9898).usePlaintext().build();
+//    private Channel serverChannel = ManagedChannelBuilder.forAddress("192.168.156.180", 9898).usePlaintext().build();
+//    private Channel serverChannel = ManagedChannelBuilder.forAddress("192.168.156.238", 9898).usePlaintext().build();
+    private Channel serverChannel = ManagedChannelBuilder.forAddress("127.0.0.1", 9898).usePlaintext().build();
     protected OrderServiceGrpc.OrderServiceBlockingStub orderServiceBlockingStub = OrderServiceGrpc.newBlockingStub(serverChannel);
     protected BillServiceGrpc.BillServiceBlockingStub billServiceBlockingStub = BillServiceGrpc.newBlockingStub(serverChannel);
     protected AccountServiceGrpc.AccountServiceBlockingStub accountServiceBlockingStub = AccountServiceGrpc.newBlockingStub(serverChannel);

@@ -11,17 +11,20 @@
 	<name>proto</name>
 	<description>Proto project for Spring Boot</description>
 
-	<!--<parent>
+	<parent>
 		<groupId>web-grpc</groupId>
 		<artifactId>grpc</artifactId>
 		<version>1.0-SNAPSHOT</version>
-	</parent>-->
+	</parent>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
 		<grpc.version>1.14.0</grpc.version>
+		<os.plugin.version>1.6.0</os.plugin.version>
+		<protobuf.plugin.version>0.5.1</protobuf.plugin.version>
+		<protoc.version>3.3.0</protoc.version>
 	</properties>
 
 	<dependencies>
@@ -43,10 +46,31 @@
 	</dependencies>
 
 	<build>
+		<extensions>
+			<extension>
+				<groupId>kr.motd.maven</groupId>
+				<artifactId>os-maven-plugin</artifactId>
+				<version>${os.plugin.version}</version>
+			</extension>
+		</extensions>
 		<plugins>
 			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
+				<groupId>org.xolstice.maven.plugins</groupId>
+				<artifactId>protobuf-maven-plugin</artifactId>
+				<version>${protobuf.plugin.version}</version>
+				<configuration>
+					<protocArtifact>com.google.protobuf:protoc:${protoc.version}:exe:${os.detected.classifier}</protocArtifact>
+					<pluginId>grpc-java</pluginId>
+					<pluginArtifact>io.grpc:protoc-gen-grpc-java:${grpc.version}:exe:${os.detected.classifier}</pluginArtifact>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>compile</goal>
+							<goal>compile-custom</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
