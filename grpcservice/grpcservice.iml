@@ -88,6 +88,14 @@
     <orderEntry type="library" name="Maven: com.google.api.grpc:proto-google-common-protos:1.0.0" level="project" />
     <orderEntry type="library" name="Maven: io.grpc:grpc-protobuf-lite:1.14.0" level="project" />
     <orderEntry type="library" name="Maven: io.grpc:grpc-stub:1.14.0" level="project" />
-    <orderEntry type="library" name="Maven: onelink-service:one-service-api:1.0.0" level="project" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/jar-lib/one-service.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>
