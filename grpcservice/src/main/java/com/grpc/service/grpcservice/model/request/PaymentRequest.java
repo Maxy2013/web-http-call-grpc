@@ -23,6 +23,7 @@ public class PaymentRequest {
     private String orderStatus;
     private String createTime;
     private String updateTime;
+    private String reqChannel;
 
     public String getBeId() {
         return beId;
@@ -158,5 +159,13 @@ public class PaymentRequest {
 
     public void setUpdateTime(String updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public String getReqChannel() {
+        return reqChannel;
+    }
+
+    public void setReqChannel(String reqChannel) {
+        this.reqChannel = reqChannel;
     }
 }

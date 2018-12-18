@@ -13,6 +13,7 @@ public class GrpcRequest {
     private String custId;
     private String chargeMoney;
     private String accountName;
+    private String offeringCode;
 
     public String getEntityType() {
         return entityType;
@@ -40,5 +41,9 @@ public class GrpcRequest {
 
     public String getAccountName() {
         return accountName;
+    }
+
+    public String getOfferingCode() {
+        return offeringCode;
     }
 }

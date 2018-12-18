@@ -5,10 +5,8 @@ import com.grpc.service.grpcservice.base.User;
 import com.grpc.service.grpcservice.model.request.GrpcRequest;
 import com.grpc.service.grpcservice.model.request.PaymentRequest;
 import com.grpc.service.grpcservice.model.response.CardInfo;
+import com.grpc.service.grpcservice.model.response.OfferingInstDTO;
 import com.grpc.service.grpcservice.model.response.OrderInfo;
-import com.grpc.service.grpcservice.model.response.SIMCardPortrait;
-import com.grpc.service.grpcservice.model.response.StringEntry;
-import com.grpc.service.util.BeanUtil;
 import onelink.api.oneservice.account.service.AccountInfoParamsRpc;
 import onelink.api.oneservice.account.service.QueryAccountInfoReply;
 import onelink.api.oneservice.account.service.QueryAccountInfoRequest;
@@ -16,13 +14,10 @@ import onelink.api.oneservice.bill.service.*;
 import onelink.api.oneservice.cm.service.*;
 import onelink.api.oneservice.common.Page;
 import onelink.api.oneservice.order.service.*;
-import onelink.api.oneservice.riskcontrol.service.SIMCardPortraitParamsRpc;
-import onelink.api.oneservice.riskcontrol.service.SIMCardPortraitReply;
-import onelink.api.oneservice.riskcontrol.service.SIMCardPortraitRequest;
-import onelink.api.oneservice.riskcontrol.service.SIMCardPortraitRpc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,6 +29,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Date;
 
 /**
  * @author lz
@@ -46,7 +42,7 @@ public class NewGrpcController extends GrpcBase{
     private static final Logger log = LoggerFactory.getLogger(NewGrpcController.class);
 
     @RequestMapping("/queryAccount")
-    public void queryAccount(String phone){
+    public void queryAccount(@RequestBody GrpcRequest grpcRequest){
         QueryAccountInfoRequest.Builder request = QueryAccountInfoRequest.newBuilder();
         Page.Builder page = Page.newBuilder();
         page.setTotal(12);
@@ -55,8 +51,8 @@ public class NewGrpcController extends GrpcBase{
         page.setChannel("WEB");
 
         AccountInfoParamsRpc.Builder params = AccountInfoParamsRpc.newBuilder();
-        params.setEntityType("S");
-        params.setEntityId(phone);
+        params.setEntityType(grpcRequest.getEntityType());
+        params.setEntityId(grpcRequest.getEntityId());
         request.setPage(page);
         request.setAccountInfoParams(params);
 
@@ -70,11 +66,16 @@ public class NewGrpcController extends GrpcBase{
     public User queryOfferings(@RequestBody GrpcRequest grpcRequest){
 
         OfferingsParamsRpc.Builder offeringsParams = OfferingsParamsRpc.newBuilder();
-        offeringsParams.setEntityId(grpcRequest.getEntityId());
-        offeringsParams.setEntityType(grpcRequest.getEntityType());
+
+        if(!StringUtils.isEmpty(grpcRequest.getEntityType())){
+            offeringsParams.setEntityId(grpcRequest.getEntityId());
+            offeringsParams.setEntityType(grpcRequest.getEntityType());
+        }
+
         offeringsParams.setBeId(grpcRequest.getBeId());
         offeringsParams.setCustId(grpcRequest.getCustId());
-
+//        offeringsParams.setStatus("2");
+//        offeringsParams.setOfferingName("物联卡个人");
         Page page = Page.newBuilder().setTotal(1000).setIndex(1).setSize(10).setChannel("WEB").build();
 
         QueryOfferingsRequest.Builder queryOfferingsRequest = QueryOfferingsRequest.newBuilder();
@@ -180,10 +181,15 @@ public class NewGrpcController extends GrpcBase{
         params.setIdType("07");
         params.setIdValue(orderInfo.getAccountCode());
         params.setDefaultBank("ABC");
+        params.setReqChannel("1000");
+
+        System.out.println("params --->" + params);
+
 
         request.setOrderPayParams(params);
 
         OrderPayReply payment = billServiceBlockingStub.payment(request.build());
+        System.out.println("payment --->" + payment);
     }
 
 
@@ -198,7 +204,7 @@ public class NewGrpcController extends GrpcBase{
         bidParams.setCustId(grpcRequest.getCustId());
         bidParams.setBeId(grpcRequest.getBeId());
         bidParams.setChargeMoney(grpcRequest.getChargeMoney());
-        bidRequest.setBidParams(bidParams);
+        bidRequest.setOrderParams(bidParams);
 
         CreateOrderReply response = billServiceBlockingStub.createOrder(bidRequest.build());
         CreateOrderResultRpc orderInfo = response.getOrderInfo();
@@ -221,6 +227,7 @@ public class NewGrpcController extends GrpcBase{
         params.setIdType("07");
         params.setIdValue(orderInfo.getAccountCode());
         params.setDefaultBank("ABC");
+        params.setReqChannel(orderInfo.getRegionId());
 
         request.setOrderPayParams(params);
 
@@ -230,14 +237,16 @@ public class NewGrpcController extends GrpcBase{
     }
 
     @RequestMapping("/queryBalance")
-    public User queryBalance(String accountId){
+    public User queryBalance(@RequestBody GrpcRequest grpcRequest){
+        Page page = Page.newBuilder().setTotal(1000).setIndex(1).setSize(10).setChannel("WEB").build();
         QueryBalanceRequest.Builder request = QueryBalanceRequest.newBuilder();
         BalanceParamsRpc.Builder builder = BalanceParamsRpc.newBuilder();
-        builder.setEntityType("A");
-        builder.setEntityId(accountId);
-        builder.setBeId("100");
-        builder.setCustId("1411000000338070");
+        builder.setEntityType(grpcRequest.getEntityType());
+        builder.setEntityId(grpcRequest.getEntityId());
+        builder.setBeId(grpcRequest.getBeId());
+        builder.setCustId(grpcRequest.getCustId());
         request.setBalanceParams(builder);
+        request.setPage(page);
 
         QueryBalanceReply queryBalanceReply = billServiceBlockingStub.queryBalance(request.build());
 
@@ -246,7 +255,7 @@ public class NewGrpcController extends GrpcBase{
         User user = new User();
         user.setId(queryBalanceReply.getResult().getCode());
         user.setName(queryBalanceReply.getResult().getMsg());
-        user.setProduct(queryBalanceReply.getBalance().getAmount());
+        user.setProduct(queryBalanceReply.getBalance(0).getAmount());
         return user;
     }
 
@@ -273,7 +282,7 @@ public class NewGrpcController extends GrpcBase{
         bidParams.setCustId(grpcRequest.getCustId());
         bidParams.setBeId(grpcRequest.getBeId());
         bidParams.setChargeMoney(grpcRequest.getChargeMoney());
-        bidRequest.setBidParams(bidParams);
+        bidRequest.setOrderParams(bidParams);
 
         CreateOrderReply response = billServiceBlockingStub.createOrder(bidRequest.build());
         CreateOrderResultRpc orderInfo = response.getOrderInfo();
@@ -283,8 +292,8 @@ public class NewGrpcController extends GrpcBase{
         return order;
     }
 
-    @RequestMapping("/SIMCardPortrait")
-    public SIMCardPortrait riskControlService(){
+//    @RequestMapping("/SIMCardPortrait")
+    /*public SIMCardPortrait riskControlService(){
         SIMCardPortraitRequest.Builder request = SIMCardPortraitRequest.newBuilder();
         Page.Builder page = Page.newBuilder();
         page.setChannel("API");
@@ -308,7 +317,7 @@ public class NewGrpcController extends GrpcBase{
         simCardPortrait.setListMap(list);
 
         return simCardPortrait;
-    }
+    }*/
 
 
     private void doCopy(Object source, Object target, String ...listProperties) {
@@ -330,6 +339,108 @@ public class NewGrpcController extends GrpcBase{
                 e.printStackTrace();
             }
         }
+    }
+
+    @RequestMapping("/queryCustOfferings")
+    public List<OfferingInstDTO> queryCustOfferings(@RequestBody GrpcRequest grpcRequest){
+        QueryCustOfferingsRequest.Builder request = QueryCustOfferingsRequest.newBuilder();
+        QueryCustOfferingsRpc.Builder params = QueryCustOfferingsRpc.newBuilder();
+        params.setBeId(grpcRequest.getBeId());
+        params.setCustId(grpcRequest.getCustId());
+//        params.setOfferingCode(grpcRequest.getOfferingCode());
+//        params.setCustName("1020");
+//        params.setRegionIds("1000,9999");
+        Page.Builder page = Page.newBuilder();
+        page.setIndex(1);
+        page.setSize(10);
+        request.setPage(page);
+        request.setCustOfferingsParam(params);
+
+        QueryOfferingsReply queryOfferingsReply = orderServiceBlockingStub.queryCustOfferings(request.build());
+        List<OfferingInstDTO> list = new ArrayList<>();
+        for (int i = 0; i < queryOfferingsReply.getOfferingListCount(); i++){
+            OfferingInstDTO offeringInstDTO = new OfferingInstDTO();
+            System.out.println(queryOfferingsReply.getOfferingList(i));
+            doCopy(queryOfferingsReply.getOfferingList(i), offeringInstDTO);
+            list.add(offeringInstDTO);
+        }
+        return list;
+    }
+
+    @RequestMapping("/queryStatusHistory")
+    public void queryStatusHistory(){
+        QuerySimStatusHistoryRequest.Builder request = QuerySimStatusHistoryRequest.newBuilder();
+        StatusHistoryParamRpc.Builder param = StatusHistoryParamRpc.newBuilder();
+        param.setBeId("100");
+        param.setCustId("1911000000293006");
+//        param.setMsisdn("17296501200");
+        /*param.setImsi("460072960000053");
+        param.setIccid("89860299011870000053")*/;
+        Page.Builder page = Page.newBuilder();
+        page.setIndex(1);
+        page.setSize(10);
+        request.setPage(page);
+        request.setStatusHistoryParams(param);
+
+        QuerySimStatusHistoryReply querySimStatusHistoryReply = cmServiceBlockingStub.querySimStatusHistory(request.build());
+        log.info("querySimStatusHistoryReply --->>\n{}", querySimStatusHistoryReply);
+    }
+
+    // 流量池累积量查询
+    @RequestMapping("/queryGroupAccumulator")
+    public void queryGroupAccumulator(){
+        QueryAccumulatorRequest.Builder request = QueryAccumulatorRequest.newBuilder();
+        AccumulateParamRpc.Builder params = AccumulateParamRpc.newBuilder();
+        params.setAccmTypeCode("ALL");
+        params.setEntityId("17296431493");
+        params.setEntityType("M");
+        params.setCustId("11000001497000");
+        params.setBeId("220");
+//        params.setRegionids("1231231,efrsdfs");
+        request.setQueryAccumlator(params);
+//        GroupAccumulatorReply groupAccumulatorReply = orderServiceBlockingStub.queryGroupAccumulator(request.build());
+//        groupAccumulatorReply.getAccumlator().getAccmUsageListCount();
+
+
+//        System.out.println("groupAccumulatorReply --->" + groupAccumulatorReply);
+        QueryAccumulatorReply queryAccumulatorReply = orderServiceBlockingStub.querySubsAccumulator(request.build());
+        queryAccumulatorReply.getAccumlator().getAccmUsageListCount();
+        System.out.println("queryAccumulatorReply --->" + queryAccumulatorReply);
+    }
+
+    @RequestMapping("/queryBatchSubsAccumulator")
+    public void queryBatchSubsAccumulator(){
+        QueryBatchAccumulatorRequest.Builder request = QueryBatchAccumulatorRequest.newBuilder();
+        request.setBeId("220");
+        request.setCustId("11000001497000");
+        RequestDetailRpc.Builder params = RequestDetailRpc.newBuilder();
+        params.setMsisdn("17296431493");
+        params.setAccmTypeCode("ALL");
+        request.addQueryAccumlator(params);
+
+        QueryBatchAccumulatorReply queryBatchAccumulatorReply = orderServiceBlockingStub.queryBatchSubsAccumulator(request.build());
+        System.out.println("queryBatchAccumulatorReply --->" + queryBatchAccumulatorReply);
+
+    }
+
+    @RequestMapping("/queryGroupInfo")
+    public void queryGroupInfo(@RequestBody GrpcRequest grpcRequest){
+        QueryGroupInfoRequest.Builder request = QueryGroupInfoRequest.newBuilder();
+        QueryGroupInfoRpc.Builder params = QueryGroupInfoRpc.newBuilder();
+        params.setBeId(grpcRequest.getBeId());//("100");
+        params.setCustId(grpcRequest.getCustId());//("1911000000293006");
+        params.setEntityType(grpcRequest.getEntityType());//("M");
+        params.setEntityId(grpcRequest.getEntityId());//("17296501109");
+//        params.setStatsFilter(0);
+
+        Page.Builder page = Page.newBuilder();
+        page.setIndex(1);
+        page.setSize(10);
+        request.setPage(page);
+
+        request.setQueryGroupInfo(params);
+        QueryGroupInfoReply queryGroupInfoReply = cmServiceBlockingStub.queryGroupInfo(request.build());
+        System.out.println("queryGroupInfoReply --->" + queryGroupInfoReply);
     }
 
 }

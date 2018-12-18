@@ -15,7 +15,8 @@ import onelink.api.oneservice.riskcontrol.service.RiskControlServiceGrpc;
  */
 public class GrpcBase {
 //    private Channel serverChannel = ManagedChannelBuilder.forAddress("192.168.156.180", 9898).usePlaintext().build();
-//    private Channel serverChannel = ManagedChannelBuilder.forAddress("192.168.156.238", 9898).usePlaintext().build();
+//    private Channel serverChannel = ManagedChannelBuilder.forAddress("192.168.156.238", 9888).usePlaintext().build();
+//    private Channel serverChannel = ManagedChannelBuilder.forAddress("192.168.235.108", 9898).usePlaintext().build();
     private Channel serverChannel = ManagedChannelBuilder.forAddress("127.0.0.1", 9898).usePlaintext().build();
     protected OrderServiceGrpc.OrderServiceBlockingStub orderServiceBlockingStub = OrderServiceGrpc.newBlockingStub(serverChannel);
     protected BillServiceGrpc.BillServiceBlockingStub billServiceBlockingStub = BillServiceGrpc.newBlockingStub(serverChannel);

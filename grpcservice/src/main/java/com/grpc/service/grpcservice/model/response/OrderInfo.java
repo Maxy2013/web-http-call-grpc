@@ -26,6 +26,7 @@ public class OrderInfo {
     private String handleStatus;
     private String customParam;
     private String activityId;
+    private String regionId;
 
     public String getBeId() {
         return beId;
@@ -185,5 +186,13 @@ public class OrderInfo {
 
     public void setActivityId(String activityId) {
         this.activityId = activityId;
+    }
+
+    public String getRegionId() {
+        return regionId;
+    }
+
+    public void setRegionId(String regionId) {
+        this.regionId = regionId;
     }
 }
