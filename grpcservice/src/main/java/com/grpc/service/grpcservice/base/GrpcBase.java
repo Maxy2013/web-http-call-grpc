@@ -5,6 +5,7 @@ import io.grpc.ManagedChannelBuilder;
 import onelink.api.oneservice.account.service.AccountServiceGrpc;
 import onelink.api.oneservice.bill.service.BillServiceGrpc;
 import onelink.api.oneservice.cm.service.CmServiceGrpc;
+import onelink.api.oneservice.detailedbill.service.DetailedBillServiceGrpc;
 import onelink.api.oneservice.order.service.OrderServiceGrpc;
 import onelink.api.oneservice.riskcontrol.service.RiskControlServiceGrpc;
 //import onelink.api.oneservice.riskcontrol.service.RiskControlServiceGrpc;
@@ -23,4 +24,6 @@ public class GrpcBase {
     protected AccountServiceGrpc.AccountServiceBlockingStub accountServiceBlockingStub = AccountServiceGrpc.newBlockingStub(serverChannel);
     protected CmServiceGrpc.CmServiceBlockingStub cmServiceBlockingStub = CmServiceGrpc.newBlockingStub(serverChannel);
     protected RiskControlServiceGrpc.RiskControlServiceBlockingStub riskControlServiceBlockingStub = RiskControlServiceGrpc.newBlockingStub(serverChannel);
+
+    protected DetailedBillServiceGrpc.DetailedBillServiceBlockingStub detailedBillServiceBlockingStub = DetailedBillServiceGrpc.newBlockingStub(serverChannel);
 }
