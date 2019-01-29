@@ -542,12 +542,12 @@ public class NewGrpcController extends GrpcBase{
 
         QueryBillParamsRpc.Builder params = QueryBillParamsRpc.newBuilder();
         params.setBeId("100");
-        params.setEntityId("1440246319426");
-        params.setEntityType("M");
+        params.setEntityId("4600729680816711");
+        params.setEntityType("I");
         params.setCustId("4111000000341011");
         params.setQueyType("DATA");
-        params.setStartTime("20180716081206");
-        params.setEndTime("20180716081206");
+        params.setStartTime("20180201081206");
+        params.setEndTime("20190123081206");
         request.setBillParams(params);
         request.setPage(page);
 
