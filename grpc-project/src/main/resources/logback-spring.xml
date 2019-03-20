@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <!-- 文件输出格式 -->
+    <property name="PATTERN" value="%-12(%d{yyyy-MM-dd HH:mm:ss.SSS}) %-4relative [%thread] %-5level %c.%M[%L] - []%msg%n" />
+    <!-- pro文件路径 -->
+    <property name="STAGE_FILE_PATH" value="/iot/logs/onelink-service" />
+    <property name="DEV_FILE_PATH" value="/iot/logs/onelink-service" />
+
+    <!-- 开发环境 -->
+    <springProfile name="dev">
+        <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder>
+                <pattern>${PATTERN}</pattern>
+            </encoder>
+        </appender>
+        
+        <!-- 每天产生一个文件 -->
+        <appender name="devFileAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <!-- 文件路径 -->
+           <!-- <file>target/OneLink-srv.log</file>-->
+            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                <!-- 文件名称 -->
+                <fileNamePattern>${DEV_FILE_PATH}/one-service.%d{yyyy-MM-dd}.log</fileNamePattern>
+            </rollingPolicy>
+
+            <layout class="ch.qos.logback.classic.PatternLayout">
+                <pattern>${PATTERN}</pattern>
+            </layout>
+        </appender>
+
+        <logger name="org.springframework.jdbc" level="debug"/>
+        <logger name="org.springframework.transaction" level="TRACE"/>
+        <logger name="onelink.service.oneservice" level="debug"/>
+        <logger name="feign" level="debug"/>
+        <logger name="org.apache.http" level="debug"/>
+        <logger name="com.netflix.hystrix" level="debug"/>
+        <logger name="org.springframework.security" level="debug"/>
+
+        <root level="info">
+            <appender-ref ref="CONSOLE" />
+            <appender-ref ref="devFileAppender"/>
+        </root>
+    </springProfile>
+
+    <!-- 测试环境 -->
+    <springProfile name="stage">
+        <!-- 每天产生一个文件 -->
+        <appender name="stageAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <!-- 文件路径 -->
+            <!--<file>${STAGE_FILE_PATH}/OneLink-srv.log</file>-->
+            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                <!-- 文件名称 -->
+                <fileNamePattern>${STAGE_FILE_PATH}/one-service.%d{yyyy-MM-dd}.log</fileNamePattern>
+            </rollingPolicy>
+
+            <layout class="ch.qos.logback.classic.PatternLayout">
+                <pattern>${PATTERN}</pattern>
+            </layout>
+        </appender>
+
+		<logger name="org.springframework.jdbc" level="debug"/>
+        <logger name="org.springframework.transaction" level="TRACE"/>
+        <logger name="onelink.service.oneservice" level="debug"/>
+        <logger name="feign" level="debug"/>
+        <logger name="org.apache.http" level="debug"/>
+        <logger name="com.netflix.hystrix" level="debug"/>
+        <logger name="org.springframework.security" level="debug"/>
+        
+        <root level="info">
+            <appender-ref ref="stageAppender" />
+        </root>
+    </springProfile>
+
+    <!-- 生产环境 -->
+    <springProfile name="prod">
+        <!-- 每天产生一个文件 -->
+        <appender name="stageAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <!-- 文件路径 -->
+            <!--<file>${STAGE_FILE_PATH}/OneLink-srv.log</file>-->
+            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                <!-- 文件名称 -->
+                <fileNamePattern>${STAGE_FILE_PATH}/one-service.%d{yyyy-MM-dd}.log</fileNamePattern>
+            </rollingPolicy>
+
+            <layout class="ch.qos.logback.classic.PatternLayout">
+                <pattern>${PATTERN}</pattern>
+            </layout>
+        </appender>
+
+        <logger name="org.springframework.jdbc" level="debug"/>
+        <logger name="org.springframework.transaction" level="TRACE"/>
+        <logger name="onelink.service.oneservice" level="debug"/>
+        <logger name="feign" level="debug"/>
+        <logger name="org.apache.http" level="debug"/>
+        <logger name="com.netflix.hystrix" level="debug"/>
+        <logger name="org.springframework.security" level="debug"/>
+
+        <root level="info">
+            <appender-ref ref="stageAppender" />
+        </root>
+    </springProfile>
+</configuration>
