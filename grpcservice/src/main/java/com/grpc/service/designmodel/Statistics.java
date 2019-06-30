@@ -6,11 +6,8 @@ package com.grpc.service.designmodel;
  */
 public class ModelAdapter extends Source implements Targetable{
 
-    /**
-     * 无34567834567854
-     */
     public void method2() {
-        System.out.println("              4567fghty------>>>>method2");
+        System.out.println("      4567fghty------>>>>method2");
     }
 
     public static void main(String[] args) {
